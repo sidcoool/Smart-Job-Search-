@@ -1102,26 +1102,6 @@ body {
   }
 }
 
-.form-control {
-  border: none;
-  border-bottom: 1px solid #000000;
-  border-radius: 0px;
-  box-shadow: none !important;
-  /* max-width: 250px; */
-}
-
-.form-group {
-  width: 280px;
-}
-
-.form-control::placeholder {
-  opacity: 0.7;
-}
-
-.form-control:focus {
-  border-bottom: 1px solid #000000;
-}
-
 .line2 {
   height: 1px;
   width: 45%;

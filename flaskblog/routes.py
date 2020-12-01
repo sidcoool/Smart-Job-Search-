@@ -3,10 +3,10 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, SearchForm
 from flaskblog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
-
+from random import randint, choice
 
 @app.route("/")
 @app.route("/home")
@@ -14,6 +14,10 @@ def home():
     posts = Post.query.all()
     print(posts)
     return render_template('home.html', posts=posts)
+
+
+
+
 
 
 @app.route("/about")
@@ -50,6 +54,24 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+
+@app.route("/search", methods=['GET', 'POST'])
+def search():
+    form = SearchForm()
+    posts = Post.query.all()
+    sortedPosts = []
+
+    # if request.method == 'POST':
+    if form.validate_on_submit():
+        print(form.query.data)
+        for post in posts:
+            if(randint(1,10) < 5):
+                sortedPosts.append(post)
+
+        return render_template('search.html', form=form, posts=sortedPosts)
+    return render_template('search.html', form=form, posts=sortedPosts)
+    
 
 
 @app.route("/logout")
@@ -122,13 +144,15 @@ def update_post(post_id):
     form = PostForm()
     if form.validate_on_submit():
         post.title = form.title.data
-        post.content = form.content.data
+        post.description = form.description.data
+        post.ctc = form.ctc.data
         db.session.commit()
         flash('Your post has been updated!', 'success')
         return redirect(url_for('post', post_id=post.id))
     elif request.method == 'GET':
         form.title.data = post.title
-        form.content.data = post.content
+        form.description.data = post.description
+        form.ctc.data = post.ctc
     return render_template('create_post.html', title='Update Post',
                            form=form, legend='Update Post')
 
