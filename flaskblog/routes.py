@@ -64,10 +64,33 @@ def search():
 
     # if request.method == 'POST':
     if form.validate_on_submit():
-        print(form.query.data)
+        q = form.query.data
+        x = q.split()
+        f = False
+
         for post in posts:
-            if(randint(1,10) < 5):
-                sortedPosts.append(post)
+            f = False
+            t = post.title.split()
+            d = post.description.split()
+            for i in x:
+                for j in t:
+                    if(i.lower() == j.lower()):
+                        sortedPosts.append(post)
+                        f = True
+                        break
+                if(f):
+                    break
+            if(not f):
+                for i in x:
+                    for j in d:
+                        if(i.lower() == j.lower()):
+                            sortedPosts.append(post)
+                            f = True
+                            break
+                    if(f):
+                        break
+
+
 
         return render_template('search.html', form=form, posts=sortedPosts)
     return render_template('search.html', form=form, posts=sortedPosts)
