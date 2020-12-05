@@ -59,14 +59,17 @@ class LoginForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
-    query = StringField('Query',
-                        validators=[DataRequired()])
+    query = StringField('Query',validators=[DataRequired()])
+    location = StringField('Location',validators=[DataRequired()])
+    minLpa = StringField('Min LPA',validators=[DataRequired()])
+                        
     search = SubmitField('Search')
 
 
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
+    location = StringField('Location', validators=[DataRequired()])
     ctc = StringField('CTC (in LPA)', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     submit = SubmitField('Post')

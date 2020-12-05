@@ -7,6 +7,7 @@ from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, Post
 from flaskblog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from random import randint, choice
+from datetime import date, datetime
 
 @app.route("/")
 @app.route("/home")
@@ -14,10 +15,6 @@ def home():
     posts = Post.query.all()
     print(posts)
     return render_template('home.html', posts=posts)
-
-
-
-
 
 
 @app.route("/about")
@@ -65,6 +62,13 @@ def search():
     # if request.method == 'POST':
     if form.validate_on_submit():
         q = form.query.data
+
+        d0 = posts[0].date_posted
+        d1 = datetime.utcnow()
+        delta = d1 - d0
+        print("No. Days Job was Posted: ", delta.total_seconds()/(3600*24))
+        
+        print(form.location.data, form.minLpa.data)
         x = q.split()
         f = False
 
@@ -143,7 +147,7 @@ def account():
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, ctc=form.ctc.data , description=form.description.data, author=current_user)
+        post = Post(title=form.title.data, location=form.location.data, ctc=form.ctc.data , description=form.description.data, author=current_user)
         db.session.add(post)
         db.session.commit()
         flash('Your Job has been created!', 'success')

@@ -22,7 +22,7 @@ def InverseDocumentFrequency(documents, matchingTerm):
 
 documents = {"I am unable to do my wor can you help me. Ofcourse, I'll help you",
              "Finding a Software Developer for my company min 3 years experience",
-             "looking for a human resource people",
+             "looking for a human resource people with computer skills",
              "computer science engineer also fresher will be accepted"}
 
 def TermFrequencyWithInverseDocumentFrequency(documents, matchingTerm):
@@ -34,4 +34,4 @@ def TermFrequencyWithInverseDocumentFrequency(documents, matchingTerm):
         print(document, tf_idf)
     print(tf_idf)
 
-TermFrequencyWithInverseDocumentFrequency(documents, "unable")
+TermFrequencyWithInverseDocumentFrequency(documents, "computer")
