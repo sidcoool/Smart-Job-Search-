@@ -68,7 +68,8 @@ def search():
         for post in posts:
             if(randint(1,10) < 5):
                 sortedPosts.append(post)
-
+        
+        
         return render_template('search.html', form=form, posts=sortedPosts)
     return render_template('search.html', form=form, posts=sortedPosts)
     
