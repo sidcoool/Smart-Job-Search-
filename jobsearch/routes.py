@@ -2,19 +2,23 @@ import os
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
-from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, SearchForm
-from flaskblog.models import User, Post
+from jobsearch import app, db, bcrypt
+from jobsearch.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, SearchForm, ApplyForm
+from jobsearch.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from random import randint, choice
 from datetime import date, datetime
+import smtplib, ssl
+from email.message import EmailMessage
+
 
 @app.route("/")
 @app.route("/home")
 def home():
     posts = Post.query.all()
+    form = ApplyForm()
     print(posts)
-    return render_template('home.html', posts=posts)
+    return render_template('home.html', posts=posts, form=form)
 
 
 @app.route("/about")
@@ -56,6 +60,7 @@ def login():
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     form = SearchForm()
+    form2 = ApplyForm()
     posts = Post.query.all()
     sortedPosts = []
 
@@ -79,25 +84,28 @@ def search():
             for i in x:
                 for j in t:
                     if(i.lower() == j.lower()):
-                        sortedPosts.append(post)
-                        f = True
-                        break
+                        if(post.location == form.location.data and post.ctc >= form.minLpa.data):
+                            sortedPosts.append(post)
+                            f = True
+                            break
                 if(f):
                     break
             if(not f):
                 for i in x:
                     for j in d:
                         if(i.lower() == j.lower()):
-                            sortedPosts.append(post)
-                            f = True
-                            break
+                            if(post.location == form.location.data and post.ctc >= form.minLpa.data):
+                                sortedPosts.append(post)
+                                f = True
+                                break
                     if(f):
                         break
+        
 
 
 
-        return render_template('search.html', form=form, posts=sortedPosts)
-    return render_template('search.html', form=form, posts=sortedPosts)
+        return render_template('search.html', form=form, form2=form2, posts=sortedPosts)
+    return render_template('search.html', form=form, form2=form2, posts=sortedPosts)
     
 
 
@@ -160,6 +168,40 @@ def new_post():
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post)
+
+
+
+
+
+@app.route("/apply/<int:post_id>", methods=['POST'])
+@login_required
+def apply(post_id):
+    form = ApplyForm()
+    link = form.link.data
+    post = Post.query.get_or_404(post_id)
+    job = post.title
+    username = current_user.username
+    email = current_user.email
+
+    msg = EmailMessage()
+    msgContent = username + " (Email: " + email + " ) has applied for the role of " + job + '''
+    ''' + "Resume: " + link
+
+    msg.set_content(msgContent)
+    msg["Subject"] = "Application Recieved !"
+    msg["From"] = "departed.lostchild@gmail.com"
+    msg["To"] = post.author.email
+
+    context=ssl.create_default_context()
+
+    with smtplib.SMTP("smtp.gmail.com", port=587) as smtp:
+        smtp.starttls(context=context)
+        smtp.login(msg["From"], "Pass1@go1")
+        smtp.send_message(msg)
+        print("Email Sent")
+
+    flash('Application Sent !', 'success')
+    return redirect('/')
 
 
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])

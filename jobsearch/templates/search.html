@@ -21,21 +21,21 @@
         </div>
       </div>
 
-        <div class="col">
+      <div class="col">
 
-          <div class="form-group">
-            {{ form.minLpa.label(class="form-control-label") }}
+        <div class="form-group">
+          {{ form.minLpa.label(class="form-control-label") }}
 
-            {{ form.minLpa(class="form-control form-control") }}
-          </div>
+          {{ form.minLpa(class="form-control form-control") }}
         </div>
       </div>
-
-   
-
+    </div>
 
 
-  
+
+
+
+
 
     <div class="form-group float-right">
       {{ form.search(class="btn btn-outline-info") }}
@@ -70,6 +70,42 @@
     <a href="{{ url_for('post', post_id=post.id) }}">
       <button class="btn1 font-sm-14 mt-3 px-md-3 p-2">Read More</button>
     </a>
+
+    <button class="btn1 font-sm-14 mt-3 px-md-3 p-2 ml-5" data-toggle="modal" data-target="#applyModal">Apply</button>
+
+
+  </div>
+</div>
+
+
+<div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="applyModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="applyModalLabel">Apply</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form action="{{ url_for('apply', post_id=post.id) }}" method="POST">
+
+          <div class="form-group">
+            {{ form2.link.label(class="form-control-label") }}
+
+            {{ form2.link(class="form-control form-control") }}
+          </div>
+
+          <div class="form-group">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input class="btn btn-danger" type="submit" value="Apply">
+          </div>
+        </form>
+
+      </div>
+    </div>
   </div>
 </div>
 {% endfor %}
